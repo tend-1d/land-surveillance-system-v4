@@ -1,0 +1,12 @@
+{% extends 'core/base.html' %}
+{% block title %}Contacts · {{ site_config.site_title }}{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card card-soft"><div class="card-body"><div class="section-label mb-2">Notification recipients</div><h1 class="h3">SMS and email routing</h1><div class="table-responsive mt-3"><table class="table align-middle"><thead><tr><th>Name</th><th>Org</th><th>Region</th><th>Phone</th><th>Email</th><th>Active</th></tr></thead><tbody>{% for contact in contacts %}<tr><td>{{ contact.name }}</td><td>{{ contact.organization }}</td><td>{{ contact.region|default:'All' }}</td><td>{{ contact.phone_number }}</td><td>{{ contact.email }}</td><td>{% if contact.active %}Yes{% else %}No{% endif %}</td></tr>{% empty %}<tr><td colspan="6" class="text-muted">No contacts yet.</td></tr>{% endfor %}</tbody></table></div></div></div>
+  </div>
+  <div class="col-lg-5">
+    <div class="card card-soft"><div class="card-body form-shell"><div class="section-label mb-2">Add recipient</div><h2 class="h4">Notification contact</h2><form method="post" class="mt-3">{% csrf_token %}{{ form.as_p }}<button class="btn btn-success">Save contact</button></form></div></div>
+  </div>
+</div>
+{% endblock %}

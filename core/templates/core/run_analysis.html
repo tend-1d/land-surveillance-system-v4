@@ -1,0 +1,9 @@
+{% extends 'core/base.html' %}
+{% block title %}Run Analysis · {{ site_config.site_title }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <div class="card card-soft"><div class="card-body p-4 p-lg-5"><div class="section-label mb-2">Launch scan</div><h1 class="h3 mb-3">Run monitoring analysis</h1><p class="text-muted">Choose an AOI and an observation window. The system will generate detections, create alerts, and route notifications to active recipients.</p><form method="post" class="mt-4">{% csrf_token %}{{ form.as_p }}<button class="btn btn-success">Run analysis</button></form></div></div>
+  </div>
+</div>
+{% endblock %}

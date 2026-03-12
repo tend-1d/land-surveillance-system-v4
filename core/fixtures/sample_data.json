@@ -1,0 +1,85 @@
+[
+  {
+    "model": "core.siteconfiguration",
+    "pk": 1,
+    "fields": {
+      "site_title": "AI Powered Land Surveillance System",
+      "tagline": "Near-real-time monitoring, alerting, and officer verification for protected landscapes.",
+      "hero_title": "Operational forest intelligence for field teams",
+      "hero_text": "This portal combines automated scans, map-based alert review, notification routing, and ranger verification in one professional command center.",
+      "hero_image_url": "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1600&q=80",
+      "dashboard_image_url": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
+      "field_image_url": "https://images.unsplash.com/photo-1473773508845-188df298d2d1?auto=format&fit=crop&w=1200&q=80",
+      "operations_email": "monitoring@example.org",
+      "operations_phone": "+254712345678",
+      "footer_text": "AI Powered Land Surveillance System \u00b7 Prototype Operations Portal",
+      "updated_at": "2026-03-12T12:00:00Z"
+    }
+  },
+  {
+    "model": "core.aoi",
+    "pk": 1,
+    "fields": {
+      "name": "Mau Forest South Block",
+      "region": "Nakuru",
+      "monitoring_type": "forest",
+      "center_lat": -0.65,
+      "center_lon": 35.58,
+      "radius_km": 5.0,
+      "polygon_json": "{\"type\":\"Polygon\",\"coordinates\":[[[35.53,-0.69],[35.64,-0.69],[35.64,-0.60],[35.53,-0.60],[35.53,-0.69]]]}",
+      "alert_threshold": 0.3,
+      "is_active": true,
+      "notes": "Priority forest surveillance corridor.",
+      "created_at": "2026-03-12T12:00:00Z"
+    }
+  },
+  {
+    "model": "core.aoi",
+    "pk": 2,
+    "fields": {
+      "name": "Mt Kenya Buffer Zone",
+      "region": "Nyeri",
+      "monitoring_type": "forest",
+      "center_lat": -0.15,
+      "center_lon": 37.28,
+      "radius_km": 4.0,
+      "polygon_json": "{\"type\":\"Polygon\",\"coordinates\":[[[37.23,-0.19],[37.34,-0.19],[37.34,-0.10],[37.23,-0.10],[37.23,-0.19]]]}",
+      "alert_threshold": 0.28,
+      "is_active": true,
+      "notes": "Monitoring for encroachment and canopy loss.",
+      "created_at": "2026-03-12T12:00:00Z"
+    }
+  },
+  {
+    "model": "core.notificationcontact",
+    "pk": 1,
+    "fields": {
+      "name": "KWS Duty Officer",
+      "organization": "Kenya Wildlife Service",
+      "region": "Nakuru",
+      "phone_number": "+254712345678",
+      "email": "kws-duty@example.org",
+      "active": true,
+      "notify_sms": true,
+      "notify_email": true,
+      "receive_all_regions": false,
+      "created_at": "2026-03-12T12:00:00Z"
+    }
+  },
+  {
+    "model": "core.notificationcontact",
+    "pk": 2,
+    "fields": {
+      "name": "National Operations Desk",
+      "organization": "Kenya Wildlife Service",
+      "region": "",
+      "phone_number": "+254700123456",
+      "email": "opsdesk@example.org",
+      "active": true,
+      "notify_sms": true,
+      "notify_email": true,
+      "receive_all_regions": true,
+      "created_at": "2026-03-12T12:00:00Z"
+    }
+  }
+]

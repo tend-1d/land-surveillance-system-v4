@@ -1,0 +1,15 @@
+{% extends 'core/base.html' %}
+{% block title %}Reports · {{ site_config.site_title }}{% endblock %}
+{% block content %}
+<div class="d-flex flex-column flex-lg-row gap-3 justify-content-between align-items-lg-center mb-4"><div><div class="section-label mb-1">Analytics</div><h1 class="h3 mb-0">Reports</h1></div><div class="d-flex gap-2"><a class="btn btn-outline-secondary" href="{% url 'export_alerts_csv' %}">Export CSV</a><a class="btn btn-outline-secondary" href="{% url 'export_alerts_geojson' %}">Export GeoJSON</a></div></div>
+<div class="row g-3 mb-4"><div class="col-md-3"><div class="card stat-card card-soft"><div class="card-body"><div class="section-label mb-2">Total alerts</div><div class="display-6">{{ summary.alerts }}</div></div></div></div><div class="col-md-3"><div class="card stat-card card-soft"><div class="card-body"><div class="section-label mb-2">Verified</div><div class="display-6">{{ summary.verified }}</div></div></div></div><div class="col-md-3"><div class="card stat-card card-soft"><div class="card-body"><div class="section-label mb-2">False positives</div><div class="display-6">{{ summary.false_positive }}</div></div></div></div><div class="col-md-3"><div class="card stat-card card-soft"><div class="card-body"><div class="section-label mb-2">Jobs</div><div class="display-6">{{ summary.jobs }}</div></div></div></div></div>
+<div class="row g-4"><div class="col-lg-6"><div class="card card-soft"><div class="card-body"><div class="section-label mb-2">Status distribution</div><canvas id="statusChart"></canvas></div></div></div><div class="col-lg-6"><div class="card card-soft"><div class="card-body"><div class="section-label mb-2">Regional distribution</div><canvas id="regionChart"></canvas></div></div></div></div>
+{% endblock %}
+{% block scripts %}
+<script>
+const byStatus = {{ by_status|safe }};
+const byRegion = {{ by_region|safe }};
+new Chart(document.getElementById('statusChart'), {type:'pie', data:{labels:byStatus.map(x=>x.status), datasets:[{data:byStatus.map(x=>x.total)}]}});
+new Chart(document.getElementById('regionChart'), {type:'bar', data:{labels:byRegion.map(x=>x.aoi__region || 'Unspecified'), datasets:[{label:'Alerts', data:byRegion.map(x=>x.total)}]}});
+</script>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'core/base.html' %}
+{% block title %}Live Map · {{ site_config.site_title }}{% endblock %}
+{% block content %}
+<div class="d-flex flex-column flex-lg-row gap-3 justify-content-between align-items-lg-center mb-4"><div><div class="section-label mb-1">Geospatial operations</div><h1 class="h3 mb-0">Live map</h1></div><div class="d-flex gap-2"><a href="{% url 'run_analysis' %}" class="btn btn-success">Generate alerts</a><a href="{% url 'alerts' %}" class="btn btn-outline-secondary">Open alert center</a></div></div>
+<div class="row g-4">
+  <div class="col-lg-8"><div class="card map-panel card-soft"><div class="card-body p-0"><div id="map"></div></div></div></div>
+  <div class="col-lg-4"><div class="card card-soft mb-4"><div class="card-body"><div class="section-label mb-2">Recent alerts</div>{% for alert in alerts %}<a href="{{ alert.get_absolute_url }}" class="d-block text-decoration-none border rounded-4 p-3 mb-3"><div class="fw-semibold">{{ alert.title }}</div><div class="small text-muted">{{ alert.aoi.name }} · {{ alert.area_hectares }} ha</div></a>{% empty %}<div class="text-muted">No alerts yet.</div>{% endfor %}</div></div><div class="photo-card" style="background-image:url('{{ site_config.hero_image_url }}');"><div class="overlay"><div class="section-label text-white-50">Forest imagery</div><h3 class="h4">Switch between street and satellite basemaps</h3><p class="mb-0">This page is ready for real detections once Earth Engine credentials are added.</p></div></div></div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+const map = L.map('map').setView([-0.4, 36.2], 7);
+const street = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 19});
+const satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {maxZoom: 19});
+street.addTo(map);
+L.control.layers({'Street': street, 'Satellite': satellite}, {}).addTo(map);
+fetch('{% url 'map_data' %}').then(r=>r.json()).then(data=>{
+  const layer = L.geoJSON(data, {
+    style: feature => ({color: feature.properties.layer === 'aoi' ? '#0d6efd' : '#dc3545', weight: 2, fillOpacity: feature.properties.layer === 'aoi' ? 0.05 : 0.25}),
+    pointToLayer: (feature, latlng) => L.circleMarker(latlng),
+    onEachFeature: (feature, lyr) => {
+      const url = feature.properties.url || '#';
+      lyr.bindPopup(`<strong>${feature.properties.name}</strong><br>${feature.properties.region || ''}<br>${feature.properties.status || ''}${feature.properties.confidence ? `<br>Confidence: ${feature.properties.confidence}` : ''}${url !== '#' ? `<br><a href="${url}">Open alert</a>` : ''}`);
+    }
+  }).addTo(map);
+  if (layer.getBounds().isValid()) map.fitBounds(layer.getBounds(), {padding:[20,20]});
+});
+</script>
+{% endblock %}

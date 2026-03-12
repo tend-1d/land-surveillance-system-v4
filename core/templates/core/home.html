@@ -1,0 +1,40 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<section class="hero p-4 p-lg-5 mb-5" style="background-image:url('{{ config.hero_image_url|default:site_config.hero_image_url }}');">
+  <div class="hero-content text-white p-lg-3">
+    <div class="section-label text-white-50 mb-3">Command center</div>
+    <h1 class="display-5 fw-bold mb-3">{{ config.hero_title|default:site_config.hero_title }}</h1>
+    <p class="lead mb-4">{{ config.hero_text|default:site_config.hero_text }}</p>
+    <div class="d-flex gap-2 flex-wrap">
+      <a href="{% url 'login' %}" class="btn btn-success btn-lg">Open dashboard</a>
+      <a href="{% url 'live_map' %}" class="btn btn-outline-light btn-lg">View live map</a>
+      <a href="{% url 'admin:index' %}" class="btn btn-light btn-lg">Admin backend</a>
+    </div>
+  </div>
+</section>
+<div class="row g-4 mb-5">
+  <div class="col-md-4"><div class="card stat-card card-soft h-100"><div class="card-body"><div class="section-label mb-2">Coverage</div><h2 class="display-6 mb-0">{{ aoi_count }}</h2><p class="text-muted mb-0">Active areas of interest configured for scanning.</p></div></div></div>
+  <div class="col-md-4"><div class="card stat-card card-soft h-100"><div class="card-body"><div class="section-label mb-2">Alerts</div><h2 class="display-6 mb-0">{{ alert_count }}</h2><p class="text-muted mb-0">Georeferenced incidents stored in the alert intelligence center.</p></div></div></div>
+  <div class="col-md-4"><div class="card stat-card card-soft h-100"><div class="card-body"><div class="section-label mb-2">Confirmed</div><h2 class="display-6 mb-0">{{ confirmed_count }}</h2><p class="text-muted mb-0">Field-confirmed cases submitted by officers.</p></div></div></div>
+</div>
+<div class="row g-4 mb-5">
+  <div class="col-lg-7">
+    <div class="card card-soft h-100"><div class="card-body p-4">
+      <div class="section-label mb-2">How it works</div>
+      <h2 class="h3">Automated scans, map-based review, officer confirmation</h2>
+      <div class="row row-cols-1 row-cols-md-3 g-3 mt-1">
+        <div class="col"><div class="border rounded-4 p-3 h-100 bg-light-subtle"><div class="kpi-icon mb-3">1</div><h3 class="h6">Run analysis</h3><p class="small text-muted mb-0">Analysts select an AOI and time window, then launch an automated scan.</p></div></div>
+        <div class="col"><div class="border rounded-4 p-3 h-100 bg-light-subtle"><div class="kpi-icon mb-3">2</div><h3 class="h6">Review alerts</h3><p class="small text-muted mb-0">Alerts are generated with polygons, confidence scores, and map references.</p></div></div>
+        <div class="col"><div class="border rounded-4 p-3 h-100 bg-light-subtle"><div class="kpi-icon mb-3">3</div><h3 class="h6">Verify field reality</h3><p class="small text-muted mb-0">Officers confirm, reject, or annotate alerts and upload evidence.</p></div></div>
+      </div>
+    </div></div>
+  </div>
+  <div class="col-lg-5">
+    <div class="photo-card" style="background-image:url('{{ site_config.field_image_url }}');"><div class="overlay"><div class="section-label text-white-50">Field response</div><h3 class="h4">Built for ranger verification and operations follow-up</h3><p class="mb-0">Use the admin backend to update recipients, AOIs, alert thresholds, and portal content.</p></div></div>
+  </div>
+</div>
+<div class="row g-4">
+  <div class="col-lg-6"><div class="card card-soft h-100"><div class="card-body p-4"><div class="section-label mb-2">Recent alerts</div><h2 class="h4">Latest detections</h2><div class="list-group list-group-flush">{% for alert in latest_alerts %}<a class="list-group-item list-group-item-action px-0" href="{{ alert.get_absolute_url }}"><strong>{{ alert.title }}</strong><br><small class="text-muted">{{ alert.aoi.name }} · {{ alert.area_hectares }} ha · {{ alert.detection_date }}</small></a>{% empty %}<div class="text-muted">No alerts yet. Load the sample data and run an analysis.</div>{% endfor %}</div></div></div></div>
+  <div class="col-lg-6"><div class="card card-soft h-100"><div class="card-body p-4"><div class="section-label mb-2">Monitored regions</div><h2 class="h4">Priority areas</h2><div class="row g-3 mt-1">{% for aoi in recent_aois %}<div class="col-sm-6"><div class="border rounded-4 p-3 h-100"><div class="fw-semibold">{{ aoi.name }}</div><div class="small text-muted">{{ aoi.region }} · {{ aoi.get_monitoring_type_display }}</div><div class="small mt-2">Threshold {{ aoi.alert_threshold }}</div></div></div>{% empty %}<div class="col-12 text-muted">No AOIs configured yet.</div>{% endfor %}</div></div></div></div>
+</div>
+{% endblock %}

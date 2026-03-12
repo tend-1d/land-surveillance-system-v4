@@ -1,0 +1,39 @@
+{% extends 'core/base.html' %}
+{% block title %}Dashboard · {{ site_config.site_title }}{% endblock %}
+{% block content %}
+<div class="row g-4 align-items-stretch mb-4">
+  <div class="col-lg-8">
+    <div class="card card-soft h-100 border-0"><div class="card-body p-4 p-lg-5" style="background:linear-gradient(90deg,rgba(15,81,50,.94),rgba(31,111,84,.88)),url('{{ site_config.dashboard_image_url }}') center/cover; border-radius:1rem; color:#fff;">
+      <div class="section-label text-white-50 mb-2">Operations dashboard</div>
+      <h1 class="display-6 fw-bold mb-3">Track detections, reviews, and response activity</h1>
+      <p class="mb-4 col-lg-8">Run a new scan, open the live map, or push configuration changes through the admin backend.</p>
+      <div class="d-flex gap-2 flex-wrap"><a class="btn btn-light" href="{% url 'run_analysis' %}">Run analysis</a><a class="btn btn-outline-light" href="{% url 'live_map' %}">Open live map</a><a class="btn btn-outline-light" href="{% url 'admin:index' %}">Admin backend</a></div>
+    </div></div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card card-soft h-100"><div class="card-body p-4"><div class="section-label mb-2">At a glance</div><ul class="list-group list-group-flush"><li class="list-group-item d-flex justify-content-between px-0"><span>Active contacts</span><strong>{{ stats.contacts_count }}</strong></li><li class="list-group-item d-flex justify-content-between px-0"><span>Configured AOIs</span><strong>{{ stats.aoi_count }}</strong></li><li class="list-group-item d-flex justify-content-between px-0"><span>False positives</span><strong>{{ stats.false_positives }}</strong></li><li class="list-group-item d-flex justify-content-between px-0"><span>Total area affected</span><strong>{{ stats.total_area }} ha</strong></li></ul></div></div>
+  </div>
+</div>
+<div class="row g-3 mb-4">
+  <div class="col-md-6 col-xl-3"><div class="card stat-card card-soft"><div class="card-body"><div class="section-label mb-2">Total alerts</div><div class="display-6">{{ stats.total_alerts }}</div></div></div></div>
+  <div class="col-md-6 col-xl-3"><div class="card stat-card card-soft"><div class="card-body"><div class="section-label mb-2">Active</div><div class="display-6">{{ stats.active_alerts }}</div></div></div></div>
+  <div class="col-md-6 col-xl-3"><div class="card stat-card card-soft"><div class="card-body"><div class="section-label mb-2">Confirmed</div><div class="display-6">{{ stats.confirmed_alerts }}</div></div></div></div>
+  <div class="col-md-6 col-xl-3"><div class="card stat-card card-soft"><div class="card-body"><div class="section-label mb-2">Area affected</div><div class="display-6">{{ stats.total_area }} ha</div></div></div></div>
+</div>
+<div class="row g-4 mb-4">
+  <div class="col-lg-6"><div class="card card-soft"><div class="card-body"><div class="section-label mb-2">Alert mix</div><canvas id="chartType"></canvas></div></div></div>
+  <div class="col-lg-6"><div class="card card-soft"><div class="card-body"><div class="section-label mb-2">Regional spread</div><canvas id="chartRegion"></canvas></div></div></div>
+</div>
+<div class="row g-4">
+  <div class="col-lg-7"><div class="card card-soft"><div class="card-body"><div class="section-label mb-2">Recent alerts</div><div class="table-responsive"><table class="table align-middle"><thead><tr><th>Alert</th><th>AOI</th><th>Status</th><th>Confidence</th></tr></thead><tbody>{% for alert in recent_alerts %}<tr><td><a href="{{ alert.get_absolute_url }}" class="fw-semibold text-decoration-none">{{ alert.title }}</a><div class="small text-muted">{{ alert.detection_date }}</div></td><td>{{ alert.aoi.name }}</td><td><span class="badge bg-{% if alert.status == 'confirmed' %}success{% elif alert.status == 'under_verification' %}warning text-dark{% elif alert.status == 'false_positive' %}secondary{% else %}danger{% endif %}">{{ alert.get_status_display }}</span></td><td>{{ alert.confidence_score }}</td></tr>{% empty %}<tr><td colspan="4" class="text-muted">No alerts yet.</td></tr>{% endfor %}</tbody></table></div></div></div></div>
+  <div class="col-lg-5"><div class="card card-soft"><div class="card-body"><div class="section-label mb-2">Recent analysis jobs</div><div class="list-group list-group-flush">{% for job in jobs %}<div class="list-group-item px-0"><div class="fw-semibold">{{ job.aoi.name }}</div><div class="small text-muted">{{ job.start_date }} to {{ job.end_date }}</div><div class="small mt-1">{{ job.engine_name }} · {{ job.get_status_display }} · {{ job.detections_count }} detections</div></div>{% empty %}<div class="text-muted">No jobs yet.</div>{% endfor %}</div></div></div></div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+const charts = {{ charts|safe }};
+const regions = {{ regions|safe }};
+new Chart(document.getElementById('chartType'), {type:'bar', data:{labels:charts.map(x=>x.alert_type), datasets:[{label:'Alerts', data:charts.map(x=>x.total)}]}});
+new Chart(document.getElementById('chartRegion'), {type:'doughnut', data:{labels:regions.map(x=>x.aoi__region || 'Unspecified'), datasets:[{data:regions.map(x=>x.total)}]}});
+</script>
+{% endblock %}
